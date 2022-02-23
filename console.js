@@ -1,6 +1,6 @@
 const output = document.createElement("p");
 output.id = "console";
-output.innerText = "Console";
+output.innerText = "Console:";
 output.style.border = "8px solid red";
 output.style.backgroundColor = "darkBlue";
 output.style.color = "red";
