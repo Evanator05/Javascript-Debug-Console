@@ -10,6 +10,13 @@
   </body>
   <script type="text/javascript" src="console.js"></script>
   <script type="text/javascript">
-  console.log("hello")
+    let codeAsString = '<script type="text/javascript" src="console.js">' + '<' + "/" + 'script>'
+    console.log('add this line to your html document to add the console \n' + codeAsString)
+
+    console.log("Log Test");
+    console.warn("Warning Test")
+    console.debug("Debug Test")
+    console.log("This below is an intentional error to show how it works :)")
+    error
   </script>
 </html>
