@@ -23,7 +23,6 @@ console.log = function(){ //logs
   console.everything.push(Array.from(arguments));
   console.defaultLog.apply(console, arguments);
   createConsoleLog(console.everything[console.everything.length-1], "inherit")
-  console.log(console.everything)
 }
 
 console.defaultError = console.error.bind(console);
@@ -31,7 +30,6 @@ console.error = function(){ // errors
   console.everything.push(Array.from(arguments));
   console.defaultError.apply(console, arguments);
   createConsoleLog(console.everything[console.everything.length-1], "red")
-  console.log(console.everything)
 }
 
 console.defaultWarn = console.warn.bind(console);
@@ -39,7 +37,6 @@ console.warn = function(){ //warns
   console.everything.push(Array.from(arguments));
   console.defaultWarn.apply(console, arguments);
   createConsoleLog(console.everything[console.everything.length-1], "yellow")
-  console.log(console.everything)
 }
 
 console.defaultDebug = console.debug.bind(console);
@@ -47,5 +44,4 @@ console.debug = function(){ //debugs
   console.everything.push(Array.from(arguments));
   console.defaultDebug.apply(console, arguments);
   createConsoleLog(console.everything[console.everything.length-1], "blue")
-  console.log(console.everything)
 }
