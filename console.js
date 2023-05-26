@@ -18,7 +18,7 @@ function createConsoleLog(text, colour) {
 }
 
 console.everything = [];
-console.log = function(){ //logs
+console.log = () -> logs
   createConsoleLog(Array.from(arguments), "inherit")
 }
 
