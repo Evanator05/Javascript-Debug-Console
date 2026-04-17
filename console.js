@@ -13,6 +13,89 @@ Object.assign(output.style, {
 });
 document.body.appendChild(output);
 
+// input container
+const inputWrapper = document.createElement("div");
+Object.assign(inputWrapper.style, {
+  display: "flex",
+  borderTop: "2px solid black"
+});
+
+const input = document.createElement("input");
+input.type = "text";
+input.placeholder = "Type JavaScript and press Enter...";
+Object.assign(input.style, {
+  flex: "1",
+  fontSize: "14px",
+  padding: "6px",
+  fontFamily: "monospace",
+  border: "none",
+  outline: "none",
+  backgroundColor: "#111",
+  color: "white"
+});
+
+inputWrapper.appendChild(input);
+output.appendChild(inputWrapper);
+
+// command history
+let history = [];
+let historyIndex = -1;
+
+// evaluate input
+function runCommand(code) {
+  try {
+    // echo input
+    createConsoleLog(["> " + code], "#aaa", "INPUT");
+
+    let result = eval(code);
+
+    // handle promises nicely
+    if (result instanceof Promise) {
+      result
+        .then(res => createConsoleLog([res], "lime", "RESULT"))
+        .catch(err => createConsoleLog([err], "red", "ERROR"));
+    } else if (result !== undefined) {
+      createConsoleLog([result], "lime", "RESULT");
+    }
+  } catch (err) {
+    createConsoleLog([err.stack || err], "red", "ERROR");
+  }
+}
+
+// key handling
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    const code = input.value.trim();
+    if (!code) return;
+
+    history.push(code);
+    historyIndex = history.length;
+
+    runCommand(code);
+    input.value = "";
+  }
+
+  // history navigation
+  if (e.key === "ArrowUp") {
+    if (historyIndex > 0) {
+      historyIndex--;
+      input.value = history[historyIndex];
+    }
+    e.preventDefault();
+  }
+
+  if (e.key === "ArrowDown") {
+    if (historyIndex < history.length - 1) {
+      historyIndex++;
+      input.value = history[historyIndex];
+    } else {
+      historyIndex = history.length;
+      input.value = "";
+    }
+    e.preventDefault();
+  }
+});
+
 function formatArgs(args) {
   return args.map(arg => {
     if (typeof arg === "object") {
