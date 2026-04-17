@@ -1,35 +1,87 @@
-const output = document.createElement("p");
+const output = document.createElement("div");
 output.id = "console";
-output.innerText = "Console:";
-output.style.border = "8px solid black";
-output.style.backgroundColor = "darkBlue";
-output.style.color = "white";
-output.style.fontSize = "32px";
-output.style.paddingLeft = "16px";
+Object.assign(output.style, {
+  border: "4px solid black",
+  backgroundColor: "#0b1a2a",
+  color: "white",
+  fontSize: "14px",
+  padding: "8px",
+  fontFamily: "monospace",
+  maxHeight: "300px",
+  overflowY: "auto",
+  whiteSpace: "pre-wrap"
+});
 document.body.appendChild(output);
 
-function createConsoleLog(text, colour) {
-  let log = document.createElement("p");
-  log.style.color = colour;
-  log.style.fontSize = "inherit";
-  log.id = "log";
-  log.innerText = text;
+function formatArgs(args) {
+  return args.map(arg => {
+    if (typeof arg === "object") {
+      try {
+        return JSON.stringify(arg, null, 2);
+      } catch {
+        return "[Circular]";
+      }
+    }
+    return String(arg);
+  }).join(" ");
+}
+
+function createConsoleLog(args, color = "white", type = "LOG") {
+  const log = document.createElement("div");
+
+  const time = new Date().toLocaleTimeString();
+
+  log.textContent = `[${time}] [${type}] ${formatArgs(args)}`;
+  log.style.color = color;
+
   output.appendChild(log);
+
+  // auto-scroll
+  output.scrollTop = output.scrollHeight;
 }
 
-console.everything = [];
-console.log = function() {
-  createConsoleLog(Array.from(arguments), "inherit")
-}
+// preserve original console
+const originalConsole = {
+  log: console.log,
+  warn: console.warn,
+  error: console.error,
+  debug: console.debug
+};
 
-window.onerror = function(msg, url, lineNo, columnNo, error) {//error messages
-  createConsoleLog("File: " + url + "\n At Line: " + lineNo + ":" + columnNo + "\n" + error, "red")
-}
+console.log = function (...args) {
+  createConsoleLog(args, "white", "LOG");
+  originalConsole.log.apply(console, args);
+};
 
-console.warn = function(){ //warns
-  createConsoleLog(Array.from(arguments), "yellow")
-}
+console.warn = function (...args) {
+  createConsoleLog(args, "yellow", "WARN");
+  originalConsole.warn.apply(console, args);
+};
 
-console.debug = function(){ //debugs
-  createConsoleLog(Array.from(arguments), "blue")
-}
+console.error = function (...args) {
+  createConsoleLog(args, "red", "ERROR");
+  originalConsole.error.apply(console, args);
+};
+
+console.debug = function (...args) {
+  createConsoleLog(args, "cyan", "DEBUG");
+  originalConsole.debug.apply(console, args);
+};
+
+// better error handling
+window.onerror = function (msg, url, lineNo, columnNo, error) {
+  createConsoleLog(
+    [`${msg}\n${url}:${lineNo}:${columnNo}\n${error?.stack || ""}`],
+    "red",
+    "ERROR"
+  );
+};
+
+// unhandled promise rejections
+window.onunhandledrejection = function (event) {
+  createConsoleLog(
+    [`Unhandled Promise Rejection:\n${event.reason}`],
+    "red",
+    "ERROR"
+  );
+};
