@@ -5,8 +5,7 @@ Object.assign(container.style, {
   color: "white",
   fontSize: "14px",
   fontFamily: "monospace",
-  width: "600px",
-  height: "300px",
+  height: "500px",
   display: "flex",
   flexDirection: "column"
 });
