@@ -1,22 +1,32 @@
-const output = document.createElement("div");
-output.id = "console";
-Object.assign(output.style, {
+const container = document.createElement("div");
+Object.assign(container.style, {
   border: "4px solid black",
   backgroundColor: "#0b1a2a",
   color: "white",
   fontSize: "14px",
-  padding: "8px",
   fontFamily: "monospace",
-  maxHeight: "300px",
+  width: "600px",
+  height: "300px",
+  display: "flex",
+  flexDirection: "column"
+});
+
+document.body.appendChild(container);
+
+// scrollable log area
+const logArea = document.createElement("div");
+Object.assign(logArea.style, {
+  flex: "1",
   overflowY: "auto",
+  padding: "8px",
   whiteSpace: "pre-wrap"
 });
-document.body.appendChild(output);
 
-// input container
+container.appendChild(logArea);
+
+// input wrapper (fixed at bottom)
 const inputWrapper = document.createElement("div");
 Object.assign(inputWrapper.style, {
-  display: "flex",
   borderTop: "2px solid black"
 });
 
@@ -24,7 +34,7 @@ const input = document.createElement("input");
 input.type = "text";
 input.placeholder = "Type JavaScript and press Enter...";
 Object.assign(input.style, {
-  flex: "1",
+  width: "100%",
   fontSize: "14px",
   padding: "6px",
   fontFamily: "monospace",
@@ -35,7 +45,7 @@ Object.assign(input.style, {
 });
 
 inputWrapper.appendChild(input);
-output.appendChild(inputWrapper);
+container.appendChild(inputWrapper);
 
 // command history
 let history = [];
@@ -113,14 +123,13 @@ function createConsoleLog(args, color = "white", type = "LOG") {
   const log = document.createElement("div");
 
   const time = new Date().toLocaleTimeString();
-
   log.textContent = `[${time}] [${type}] ${formatArgs(args)}`;
   log.style.color = color;
 
-  output.appendChild(log);
+  logArea.appendChild(log);
 
-  // auto-scroll
-  output.scrollTop = output.scrollHeight;
+  // keep scroll pinned to bottom
+  logArea.scrollTop = logArea.scrollHeight;
 }
 
 // preserve original console
